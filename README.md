@@ -12,10 +12,11 @@ Pick the variant for your CPU: `FEX-cortex-a72` (baseline, runs on any ARMv8.0 d
 curl -fsSL -o FEX https://github.com/PeronGH/FEX-static/releases/latest/download/FEX-cortex-a72
 chmod +x FEX
 printf '%s\n' ":FEX-x86_64:M:0:\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\x00\x00\x00\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$PWD/FEX:POCF" | sudo tee /proc/sys/fs/binfmt_misc/register
-./some-x86_64-binary
-```
 
-FEX can also be invoked directly: `./FEX some-x86_64-binary`.
+# then you can just:
+./some-x86_64-binary
+docker run --platform linux/amd64 ...
+```
 
 Configuration is hermetic: only `FEX_*` environment variables (e.g. `FEX_ROOTFS`) are honored — config files under `~/.fex-emu/` and `/usr/share/fex-emu/` are ignored.
 
@@ -39,3 +40,7 @@ cd FEX-static
 ```
 
 CI builds, smoke-tests (x86-64 busybox via binfmt_misc), and publishes the binary as a GitHub release tagged with the upstream commit hash. A daily workflow bumps the submodule to upstream main when the patches still apply, and dispatches a fresh build.
+
+## Used by
+
+- [ArcBox](https://github.com/arcboxlabs/arcbox) — uses FEX-static to run amd64 binaries in its arm64 VMs on Apple's Hypervisor framework.

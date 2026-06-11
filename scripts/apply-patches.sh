@@ -5,5 +5,4 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 git submodule update --init --force --checkout FEX
-git -C FEX am --abort 2>/dev/null || true
-git -c user.name=patches -c user.email=patches@localhost -C FEX am --3way "$PWD"/patches/*.patch
+git -C FEX apply --3way "$PWD"/patches/*.patch

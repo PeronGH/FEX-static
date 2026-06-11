@@ -33,8 +33,7 @@ jobs:
           git -C FEX remote add origin "$url"
           git -C FEX fetch -q --depth 1 origin "$latest"
           git -C FEX checkout -q --detach "$latest"
-          git -c user.name=ci -c user.email=ci@localhost -C FEX am --3way "$PWD"/patches/*.patch
-          git -C FEX checkout -q --detach "$latest"
+          git -C FEX apply --3way "$PWD"/patches/*.patch
 
           git add FEX
           git -c user.name='github-actions[bot]' \

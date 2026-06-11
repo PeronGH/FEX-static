@@ -1,12 +1,4 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Peron <peron_ap@icloud.com>
-Date: Fri, 5 Jun 2026 11:16:19 +0000
-Subject: [PATCH] Run without requiring or forking a FEXServer
-
----
- Source/Common/FEXServerClient.cpp              | 9 +++------
- Source/Tools/FEXInterpreter/FEXInterpreter.cpp | 5 +----
- 2 files changed, 4 insertions(+), 10 deletions(-)
+Run without requiring or forking a FEXServer
 
 diff --git a/Source/Common/FEXServerClient.cpp b/Source/Common/FEXServerClient.cpp
 index be2736080..ceedd0830 100644

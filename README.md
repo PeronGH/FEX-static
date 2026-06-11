@@ -22,7 +22,7 @@ FEX can also be invoked directly: `./FEX some-x86_64-binary`.
 Upstream FEX is tracked as a pristine submodule; this repo only carries the patches and build glue.
 
 - `FEX/` — shallow submodule pointing at upstream `FEX-Emu/FEX`
-- `patches/` — `git am`-able patches applied on top of the pinned commit
+- `patches/` — plain unified diffs applied on top of the pinned commit
 - `scripts/apply-patches.sh` — reset the submodule to the pin and apply all patches (idempotent)
 - `scripts/build.sh` — apply patches, then configure and build `build/Bin/FEX`
 
@@ -37,14 +37,3 @@ cd FEX-static
 ```
 
 CI builds, smoke-tests (x86-64 busybox via binfmt_misc), and publishes the binary as a GitHub release tagged with the upstream commit hash. A daily workflow bumps the submodule to upstream main when the patches still apply, and dispatches a fresh build.
-
-## Updating upstream
-
-```sh
-git -C FEX fetch origin
-git -C FEX checkout <new-upstream-commit>
-./scripts/apply-patches.sh   # fix conflicts here, regenerate patches if needed
-git add FEX && git commit
-```
-
-To change a patch, edit the commits in the submodule (they are real commits after `apply-patches.sh`) and regenerate with `git -C FEX format-patch --zero-commit --no-signature -o ../patches <pin>..HEAD`.

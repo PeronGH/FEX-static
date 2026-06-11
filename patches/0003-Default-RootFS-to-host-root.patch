@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Peron <peron_ap@icloud.com>
+Date: Fri, 5 Jun 2026 12:30:19 +0000
+Subject: [PATCH] Default RootFS to host root
+
+---
+ FEXCore/Source/Interface/Config/Config.json.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/FEXCore/Source/Interface/Config/Config.json.in b/FEXCore/Source/Interface/Config/Config.json.in
+index fa56db44c..ed4f79e46 100644
+--- a/FEXCore/Source/Interface/Config/Config.json.in
++++ b/FEXCore/Source/Interface/Config/Config.json.in
+@@ -137,7 +137,7 @@
+     "Emulation": {
+       "RootFS": {
+         "Type": "str",
+-        "Default": "",
++        "Default": "/",
+         "Desc": [
+           "Which Root filesystem prefix to use",
+           "This can be a filesystem path",

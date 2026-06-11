@@ -1,0 +1,45 @@
+name: Update upstream
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  bump:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump FEX submodule to its tracked branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url=$(git config -f .gitmodules submodule.FEX.url)
+          branch=$(git config -f .gitmodules submodule.FEX.branch)
+          latest=$(git ls-remote "$url" "refs/heads/$branch" | cut -f1)
+          current=$(git rev-parse HEAD:FEX)
+          if [ "$latest" = "$current" ]; then
+            echo "Already at FEX-Emu/FEX@$current"
+            exit 0
+          fi
+
+          # Shallow-fetch only the new tip and verify the patches still apply.
+          git -C FEX init -q
+          git -C FEX remote add origin "$url"
+          git -C FEX fetch -q --depth 1 origin "$latest"
+          git -C FEX checkout -q --detach "$latest"
+          git -c user.name=ci -c user.email=ci@localhost -C FEX am --3way "$PWD"/patches/*.patch
+          git -C FEX checkout -q --detach "$latest"
+
+          git add FEX
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m "Bump FEX to ${latest:0:9}"
+          git push
+          # Pushes made with GITHUB_TOKEN don't trigger push workflows; dispatch the build explicitly.
+          gh workflow run ci.yml --ref main

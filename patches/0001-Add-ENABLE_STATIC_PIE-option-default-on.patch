@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Peron <peron_ap@icloud.com>
+Date: Fri, 5 Jun 2026 10:46:13 +0000
+Subject: [PATCH] Add ENABLE_STATIC_PIE option (default on)
+
+---
+ CMakeLists.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1d848401c..558ec29b0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -282,6 +282,15 @@ if (USE_LINKER)
+   add_link_options("-fuse-ld=${USE_LINKER}")
+ endif()
+ 
++# FEX-static fork: link executables as static-pie (exe-only flags leave shared libs alone).
++option(ENABLE_STATIC_PIE "Statically link executables as static-pie (needs static libc/libstdc++ + lld)" TRUE)
++if (ENABLE_STATIC_PIE)
++  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-pie")
++  if (NOT USE_LINKER)
++    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld") # lld: GNU ld can't read ThinLTO bitcode
++  endif()
++endif()
++
+ if (ENABLE_LIBCXX)
+   message(WARNING "This is an unsupported configuration and should only be used for testing")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")

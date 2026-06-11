@@ -1,0 +1,76 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shellcheck
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -yq shellcheck
+          shellcheck scripts/*.sh
+
+  build:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential clang lld llvm cmake ninja-build nasm
+
+      - name: Apply patches
+        run: ./scripts/apply-patches.sh
+
+      - name: Configure
+        run: |
+          cmake -S FEX -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+            -DBUILD_FEXCONFIG=False -DENABLE_CCACHE=False \
+            -DTUNE_CPU=neoverse-n1
+
+      - name: Build
+        run: cmake --build build --target FEX
+
+      - name: Verify static binary
+        run: |
+          file build/Bin/FEX
+          ldd build/Bin/FEX || true
+
+      - name: Run x86-64 busybox via binfmt_misc
+        run: |
+          FEX="$PWD/build/Bin/FEX"
+          printf '%s\n' ":FEX-x86_64:M:0:\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\x00\x00\x00\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$FEX:POCF" | sudo tee /proc/sys/fs/binfmt_misc/register
+          curl -fsSL -o busybox-x64 https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox
+          chmod +x busybox-x64
+          ./busybox-x64 uname -m
+          ./busybox-x64 echo "x86-64 busybox via binfmt + FEX on arm64"
+          ./busybox-x64 ls /
+
+      - name: Publish release tagged with upstream commit
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          full=$(git rev-parse HEAD:FEX)
+          tag=${full:0:9}
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" build/Bin/FEX --clobber
+          else
+            gh release create "$tag" build/Bin/FEX --title "FEX $tag" \
+              --notes "Static-pie FEX built from [FEX-Emu/FEX@$tag](https://github.com/FEX-Emu/FEX/commit/$full) with patches applied."
+          fi

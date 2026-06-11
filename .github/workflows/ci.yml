@@ -33,20 +33,9 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             build-essential clang lld llvm cmake ninja-build nasm
 
-      - name: Apply patches
-        run: ./scripts/apply-patches.sh
-
-      - name: Configure
-        run: |
-          cmake -S FEX -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
-            -DBUILD_FEXCONFIG=False -DENABLE_CCACHE=False \
-            -DTUNE_CPU=${{ matrix.tune }}
-
       - name: Build
         run: |
-          cmake --build build --target FEX
+          ./scripts/build.sh -DTUNE_CPU=${{ matrix.tune }}
           cp build/Bin/FEX "FEX-${{ matrix.tune }}"
 
       - name: Verify static binary

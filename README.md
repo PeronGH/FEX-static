@@ -39,7 +39,7 @@ cd FEX-static
 ./scripts/build.sh
 ```
 
-CI builds, smoke-tests (x86-64 busybox via binfmt_misc), and publishes the binary as a GitHub release tagged with the upstream commit hash. A daily workflow bumps the submodule to upstream main when the patches still apply, and dispatches a fresh build.
+CI builds, smoke-tests, and publishes the binary as a GitHub release tagged with the upstream commit hash. A daily workflow bumps the submodule to upstream main when the patches still apply, and dispatches a fresh build.
 
 ## Used by
 

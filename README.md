@@ -6,8 +6,10 @@ FEX-static is a single static binary of [FEX](https://github.com/FEX-Emu/FEX), t
 
 ## Quick start
 
+Pick the variant for your CPU: `FEX-cortex-a72` (baseline, runs on any ARMv8.0 device incl. Raspberry Pi 4), `FEX-cortex-a76` (ARMv8.2, Raspberry Pi 5 and most modern boards), or `FEX-apple-m1` (Apple Silicon VMs).
+
 ```sh
-curl -fsSLO https://github.com/PeronGH/FEX-static/releases/latest/download/FEX
+curl -fsSL -o FEX https://github.com/PeronGH/FEX-static/releases/latest/download/FEX-cortex-a72
 chmod +x FEX
 printf '%s\n' ":FEX-x86_64:M:0:\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\x00\x00\x00\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$PWD/FEX:POCF" | sudo tee /proc/sys/fs/binfmt_misc/register
 ./some-x86_64-binary

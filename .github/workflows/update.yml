@@ -32,6 +32,9 @@ jobs:
           git -C FEX init -q
           git -C FEX remote add origin "$url"
           git -C FEX fetch -q --depth 1 origin "$latest"
+          # Also fetch the current pin so --3way has the base blobs when upstream
+          # touched a patched file.
+          git -C FEX fetch -q --depth 1 origin "$current"
           git -C FEX checkout -q --detach "$latest"
           git -C FEX apply --3way "$PWD"/patches/*.patch
 

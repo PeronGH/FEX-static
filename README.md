@@ -17,6 +17,8 @@ printf '%s\n' ":FEX-x86_64:M:0:\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x
 
 FEX can also be invoked directly: `./FEX some-x86_64-binary`.
 
+Configuration is hermetic: only `FEX_*` environment variables (e.g. `FEX_ROOTFS`) are honored — config files under `~/.fex-emu/` and `/usr/share/fex-emu/` are ignored.
+
 ## Repo layout
 
 Upstream FEX is tracked as a pristine submodule; this repo only carries the patches and build glue.

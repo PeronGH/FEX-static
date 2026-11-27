@@ -2,7 +2,7 @@
 
 A faster drop-in replacement for `qemu-user-static` on ARM64 Linux.
 
-FEX-static is a single static binary of [FEX](https://github.com/FEX-Emu/FEX), the x86/x86-64 JIT emulator. Register it with binfmt_misc and x86-64 binaries run transparently — typically 3–10x faster than QEMU's TCG interpreter. No FEXServer, no RootFS image, no shared libraries: one file works on any arm64 system.
+FEX-static is a single static binary of [FEX](https://github.com/FEX-Emu/FEX), the x86/x86-64 JIT emulator. Register it with binfmt_misc and x86-64 and 32-bit x86 binaries run transparently — typically 3–10x faster than QEMU's TCG interpreter. No FEXServer, no RootFS image, no shared libraries: one file works on any arm64 system.
 
 ## Quick start
 
@@ -12,10 +12,13 @@ Pick the variant for your CPU: `FEX-cortex-a72` (baseline, runs on any ARMv8.0 d
 curl -fsSL -o FEX https://github.com/PeronGH/FEX-static/releases/latest/download/FEX-cortex-a72
 chmod +x FEX
 printf '%s\n' ":FEX-x86_64:M:0:\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\x00\x00\x00\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$PWD/FEX:POCF" | sudo tee /proc/sys/fs/binfmt_misc/register
+# optional: 32-bit x86 as well
+printf '%s\n' ":FEX-x86:M:0:\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\x00\x00\x00\xff\xff\xff\xff\xff\xfe\xff\xff\xff:$PWD/FEX:POCF" | sudo tee /proc/sys/fs/binfmt_misc/register
 
 # then you can just:
 ./some-x86_64-binary
 docker run --platform linux/amd64 ...
+docker run --platform linux/386 ...
 ```
 
 Configuration is hermetic: only `FEX_*` environment variables (e.g. `FEX_ROOTFS`) are honored — config files under `~/.fex-emu/` and `/usr/share/fex-emu/` are ignored.

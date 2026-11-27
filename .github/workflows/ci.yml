@@ -56,6 +56,10 @@ jobs:
           arch32=$(docker run --rm --platform linux/386 debian:stable-slim dpkg --print-architecture)
           echo "32-bit guest arch: $arch32"
           test "$arch32" = "i386"
+          # musl enters the kernel through AT_SYSINFO, which only the fallback vsyscall page provides here
+          musl32=$(docker run --rm --platform linux/386 alpine:latest apk --print-arch)
+          echo "32-bit musl guest arch: $musl32"
+          test "$musl32" = "x86"
 
       - uses: actions/upload-artifact@v4
         with:

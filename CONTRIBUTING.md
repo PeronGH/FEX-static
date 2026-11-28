@@ -5,8 +5,14 @@ FEX-static is upstream [FEX](https://github.com/FEX-Emu/FEX) plus a small set of
 ## Principles
 
 1. **Behave like `qemu-user-static`.** Features that a single static binary does not need, or that cannot work without a RootFS or FEXServer, can be dropped or stubbed out.
-2. **Fix bugs that are specific to this setup.** Bugs that only show up when FEX runs as a static binfmt_misc handler with no RootFS, and not in the official setup, are fixed here. If the bug also reproduces on official FEX, please report it upstream too, so the patch can be dropped once it lands there.
+2. **Fix bugs that are specific to this setup.** Bugs that only show up when FEX runs as a static binfmt_misc handler with no RootFS, and not in the official setup, are fixed here. If the bug also reproduces on official FEX, please report it upstream too, so the patch can be dropped once upstream fixes it.
 3. **Avoid churn.** A patch should be small and unlikely to break when upstream moves. Change only the lines the fix needs, prefer code that upstream rarely touches, and do not refactor or reformat around it.
+
+## AI-assisted contributions
+
+AI-assisted and AI-written contributions are welcome here; only the end result matters.
+
+Upstream FEX does not accept AI-generated code, and we fully respect that decision. Do not submit code upstream if AI was used to write it, including patches from this repo. Describe the bug in an upstream issue instead.
 
 ## Patches
 

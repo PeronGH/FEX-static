@@ -28,7 +28,7 @@ Configuration is hermetic: only `FEX_*` environment variables (e.g. `FEX_ROOTFS`
 Upstream FEX is tracked as a pristine submodule; this repo only carries the patches and build glue.
 
 - `FEX/` — shallow submodule pointing at upstream `FEX-Emu/FEX`
-- `patches/` — plain unified diffs applied on top of the pinned commit
+- `patches/` — plain unified diffs applied on top of the pinned commit; see [CONTRIBUTING.md](CONTRIBUTING.md) for what qualifies
 - `scripts/apply-patches.sh` — reset the submodule to the pin and apply all patches (idempotent)
 - `scripts/build.sh` — apply patches, then configure and build `build/Bin/FEX`
 

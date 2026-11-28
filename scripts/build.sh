@@ -10,10 +10,9 @@ cd "$(dirname "$0")/.."
 # lld because GNU ld can't read ThinLTO bitcode.
 # System xxhash is disabled because distros ship only the shared library.
 cmake -S FEX -B build -G Ninja \
-  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
   -DCMAKE_EXE_LINKER_FLAGS="-static-pie -fuse-ld=lld" \
-  -DBUILD_FEXCONFIG=False -DENABLE_CCACHE=False \
+  -DBUILD_FEXCONFIG=False \
   -DENABLE_OFFLINE_TELEMETRY=False -DENABLE_GDB_SYMBOLS=False \
   -DCMAKE_DISABLE_FIND_PACKAGE_xxhash=TRUE \
   "$@"

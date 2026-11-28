@@ -1,0 +1,42 @@
+Tolerate seccomp-restricted personality()
+
+diff --git a/Source/Tools/FEXInterpreter/ELFCodeLoader.h b/Source/Tools/FEXInterpreter/ELFCodeLoader.h
+index fcc65b8..973eb1c 100644
+--- a/Source/Tools/FEXInterpreter/ELFCodeLoader.h
++++ b/Source/Tools/FEXInterpreter/ELFCodeLoader.h
+@@ -410,11 +410,15 @@ public:
+ 
+     // Set the process personality here
+     // Also, what about ADDR_LIMIT_3GB & co ?
+-    uint32_t Personality = personality(~0U);
++    // FEX-static: personality() may be restricted by a seccomp filter (Flatpak only
++    // permits setting PER_LINUX, and rejects the ~0U query). Treat a failed query as
++    // PER_LINUX, and since the persona is tracked internally (see the personality
++    // syscall handler), tolerate failing to mirror it onto the host.
++    const int HostPersonality = personality(~0U);
++    uint32_t Personality = HostPersonality == -1 ? PER_LINUX : static_cast<uint32_t>(HostPersonality);
+     Personality |= ExecuteAll ? READ_IMPLIES_EXEC : 0;
+-    if (-1 == personality(Personality)) {
+-      LogMan::Msg::EFmt("Setting personality failed");
+-      return false;
++    if ((HostPersonality == -1 || static_cast<uint32_t>(HostPersonality) != Personality) && -1 == personality(Personality)) {
++      LogMan::Msg::IFmt("Setting host personality 0x{:x} failed; continuing with emulated persona", Personality);
+     }
+ 
+     if (Thread) {
+diff --git a/Source/Tools/LinuxEmulation/LinuxSyscalls/ThreadManager.cpp b/Source/Tools/LinuxEmulation/LinuxSyscalls/ThreadManager.cpp
+index 8e7d466..333ce33 100644
+--- a/Source/Tools/LinuxEmulation/LinuxSyscalls/ThreadManager.cpp
++++ b/Source/Tools/LinuxEmulation/LinuxSyscalls/ThreadManager.cpp
+@@ -243,7 +243,10 @@ ThreadManager::CreateThread(const FEXCore::Core::CPUState* NewThreadState, uint6
+     FEX::HLE::_SyscallHandler->SeccompEmulator.InheritSeccompFilters(InheritThread, ThreadStateObject);
+     ThreadStateObject->persona = InheritThread->persona;
+   } else {
+-    ThreadStateObject->persona = ::personality(0xffffffff);
++    // FEX-static: the query can be blocked by seccomp (e.g. Flatpak); fall back to PER_LINUX
++    // rather than storing -1, which would set every persona flag.
++    const int HostPersonality = ::personality(0xffffffff);
++    ThreadStateObject->persona = HostPersonality == -1 ? PER_LINUX : static_cast<uint32_t>(HostPersonality);
+   }
+ 
+   ++IdleWaitRefCount;

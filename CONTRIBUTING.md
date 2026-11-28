@@ -10,9 +10,7 @@ FEX-static is upstream [FEX](https://github.com/FEX-Emu/FEX) plus a small set of
 
 ## AI-assisted contributions
 
-AI-assisted and AI-written contributions are welcome here; only the end result matters.
-
-Upstream FEX does not accept AI-generated code, and we fully respect that decision. Do not submit code upstream if AI was used to write it, including patches from this repo. Describe the bug in an upstream issue instead.
+AI-assisted and AI-written contributions are welcome here; only the end result matters. Upstream FEX does not accept AI-generated code, and we fully respect that decision.
 
 ## Patches
 

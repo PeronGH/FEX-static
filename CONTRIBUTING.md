@@ -1,6 +1,6 @@
 # Contributing
 
-FEX-static is upstream [FEX](https://github.com/FEX-Emu/FEX) plus a small set of patches in `patches/`. A daily job bumps the upstream pin for as long as every patch still applies, so each patch carried here is a standing maintenance cost.
+FEX-static is upstream [FEX](https://github.com/FEX-Emu/FEX) plus a small set of patches in `patches/`. A daily job moves the pin to upstream main and carries the patches along, stopping when one conflicts, so each patch carried here is a standing maintenance cost.
 
 ## Principles
 

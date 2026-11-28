@@ -5,4 +5,4 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 git submodule update --init --force --checkout FEX
-git -C FEX apply --3way "$PWD"/patches/*.patch
+git -C FEX apply "$PWD"/patches/*.patch
